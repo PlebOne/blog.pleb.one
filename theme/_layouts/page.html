@@ -1,0 +1,11 @@
+{% extends "_layouts/base.html" %}
+{% block title %}{{ page.title }} · {{ site.title }}{% endblock %}
+{% block main %}
+<article class="page">
+  <p class="eyebrow">PlebOne Blog</p>
+  <h1>{{ page.title }}</h1>
+  <div class="content">
+    {{ page.content }}
+  </div>
+</article>
+{% endblock %}

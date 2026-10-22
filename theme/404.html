@@ -1,0 +1,9 @@
+{% extends "_layouts/base.html" %}
+{% block title %}Not found · {{ site.title }}{% endblock %}
+{% block main %}
+<p class="eyebrow">404</p>
+<h1>Not found</h1>
+<div class="panel">
+  <p>That page doesn't exist here. It may be a Nine Point Labs post that isn't about Nostr, Bitcoin or freedom tech, so try <a href="{{ site.params.ninepointlabs }}">blog.ninepointlabs.com</a>, or look through the <a href="{{ '/archive/' | url }}">archive</a>.</p>
+</div>
+{% endblock %}

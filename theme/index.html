@@ -1,0 +1,40 @@
+{#---
+paginate = "posts"
+per_page = 20
+url = "{% if pager.number == 1 %}/{% else %}/page/{{ pager.number }}/{% endif %}"
+---#}
+{% extends "_layouts/base.html" %}
+{% from "_macros/posts.html" import tag_links %}
+{% block title %}{% if pager.number > 1 %}Page {{ pager.number }} · {% endif %}{{ site.title }}{% endblock %}
+{% block main %}
+{% if pager.number == 1 %}
+<section class="intro" aria-labelledby="intro-title">
+  <p class="eyebrow">PlebOne Blog</p>
+  <h1 id="intro-title">Nostr, Bitcoin and freedom tech</h1>
+  <p class="lede">{{ site.description }}</p>
+  {% set about = pages | selectattr("url", "eq", "/about/" | url) | first -%}
+  <p class="intro-links">{% if about %}<a href="{{ about.url }}">About this blog</a> · {% endif %}<a href="{{ site.feed_url }}">Follow by RSS</a></p>
+</section>
+{% else %}
+<h1>Posts, page {{ pager.number }}</h1>
+{% endif %}
+<section class="posts" aria-label="Posts">
+{% for p in pager.items %}
+<article class="summary">
+  <p class="eyebrow"><time datetime="{{ p.date }}">{{ p.date | date("%B %-d, %Y") }}</time>{% if p.meta.canonical %} · also on blog.ninepointlabs.com{% endif %}</p>
+  <h2><a href="{{ p.url }}">{{ p.title }}</a>{% if p.draft %} <span class="draft">draft</span>{% endif %}</h2>
+  {{ p.excerpt }}
+  <p class="more"><a href="{{ p.url }}">Read the post<span class="sr-only">: {{ p.title }}</span> →</a></p>
+</article>
+{% else %}
+<p class="empty">Nothing here yet.</p>
+{% endfor %}
+</section>
+{% if pager.total > 1 %}
+<nav class="pager" aria-label="Pages">
+  {% if pager.prev %}<a href="{{ pager.prev }}">← Newer</a>{% else %}<span></span>{% endif %}
+  <span>Page {{ pager.number }} of {{ pager.total }}</span>
+  {% if pager.next %}<a href="{{ pager.next }}">Older →</a>{% else %}<span></span>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

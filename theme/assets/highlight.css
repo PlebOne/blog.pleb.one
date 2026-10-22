@@ -1,0 +1,17 @@
+/* Syntax highlighting for folderblog's hl-* classes, in PlebOne greens. */
+.hl-comment, .hl-punctuation.hl-definition.hl-comment { color: #6b7280; font-style: italic; }
+.hl-keyword, .hl-storage { color: #86efac; }
+.hl-keyword.hl-operator { color: #d1d5db; }
+.hl-string, .hl-markup.hl-raw.hl-inline { color: #fcd34d; }
+.hl-constant, .hl-constant.hl-numeric { color: #fdba74; }
+.hl-entity.hl-name.hl-function, .hl-support.hl-function, .hl-variable.hl-function { color: #67e8f9; }
+.hl-entity.hl-name.hl-class, .hl-entity.hl-name.hl-type, .hl-support.hl-type, .hl-support.hl-class { color: #4ade80; }
+.hl-entity.hl-name.hl-tag { color: #4ade80; }
+.hl-entity.hl-other.hl-attribute-name { color: #fdba74; }
+.hl-variable.hl-parameter { color: #e5e7eb; }
+.hl-markup.hl-heading, .hl-entity.hl-name.hl-section { color: #4ade80; font-weight: bold; }
+.hl-markup.hl-bold { font-weight: bold; }
+.hl-markup.hl-italic { font-style: italic; }
+.hl-markup.hl-inserted { color: #4ade80; }
+.hl-markup.hl-deleted { color: #f87171; }
+.hl-invalid { color: #0a0a0a; background: #f87171; }

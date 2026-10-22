@@ -1,0 +1,37 @@
+{% extends "_layouts/base.html" %}
+{% from "_macros/posts.html" import tag_links %}
+{% block title %}{{ post.title }} · {{ site.title }}{% endblock %}
+{% set og_type = "article" %}
+{% block description %}{{ post.summary }}{% endblock %}
+{% block head %}
+{%- set image = post.image or site.image %}
+{%- set canonical = post.meta.canonical or post.permalink %}
+<meta property="article:published_time" content="{{ post.date }}">
+{% if post.updated %}<meta property="article:modified_time" content="{{ post.updated }}">
+{% endif %}<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": {{ post.title | tojson }}, "url": {{ canonical | tojson }}, "mainEntityOfPage": {"@type": "WebPage", "@id": {{ canonical | tojson }}}, "datePublished": {{ post.date | tojson }}
+{%- if post.updated %}, "dateModified": {{ post.updated | tojson }}{% endif %}
+{%- if post.summary %}, "description": {{ post.summary | tojson }}{% endif %}
+{%- if image %}, "image": {{ image | tojson }}{% endif %}
+{%- if site.author %}, "author": {"@type": "Person", "name": {{ site.author | tojson }}}{% endif %}}
+</script>
+{% endblock %}
+{% block main %}
+<article class="post">
+  <header>
+    <p class="eyebrow"><time datetime="{{ post.date }}">{{ post.date | date("%B %-d, %Y") }}</time> · {{ post.reading_time }} min read{% if post.draft %} · <span class="draft">draft</span>{% endif %}</p>
+    <h1>{{ post.title }}</h1>
+    {% if post.meta.canonical %}<p class="also-on">Also on <a href="{{ post.meta.canonical }}">blog.ninepointlabs.com</a></p>{% endif %}
+  </header>
+  <div class="content">
+    {{ post.content }}
+  </div>
+  <footer>
+    {{ tag_links(post.tags) }}
+    <nav class="neighbours" aria-label="More posts">
+      {% if post.newer %}<a rel="next" href="{{ post.newer.url }}">← {{ post.newer.title }}</a>{% else %}<span></span>{% endif %}
+      {% if post.older %}<a rel="prev" href="{{ post.older.url }}">{{ post.older.title }} →</a>{% endif %}
+    </nav>
+  </footer>
+</article>
+{% endblock %}

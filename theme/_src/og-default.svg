@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  <rect x="60" y="60" width="1080" height="510" rx="16" fill="#052e16" fill-opacity="0.35" stroke="#22c55e" stroke-opacity="0.4" stroke-width="2"/>
+  <rect x="60" y="60" width="8" height="510" fill="#22c55e"/>
+  <g transform="translate(120,130)">
+    <rect width="96" height="96" rx="14" fill="none" stroke="#4ade80" stroke-opacity="0.6" stroke-width="3"/>
+    <path d="M24 30l18 18-18 18M50 66h26" fill="none" stroke="#4ade80" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="120" y="330" font-family="JetBrainsMono NF, DejaVu Sans Mono, monospace" font-size="84" font-weight="700" fill="#4ade80">PlebOne Blog</text>
+  <text x="120" y="400" font-family="DejaVu Sans, sans-serif" font-size="36" fill="#d1d5db">Nostr, Bitcoin and freedom tech</text>
+  <text x="120" y="500" font-family="JetBrainsMono NF, DejaVu Sans Mono, monospace" font-size="30" letter-spacing="3" fill="#86efac">BLOG.PLEB.ONE</text>
+</svg>

@@ -1,0 +1,24 @@
+{#---
+url = "/archive/"
+---#}
+{% extends "_layouts/base.html" %}
+{% from "_macros/posts.html" import post_list %}
+{% block title %}Archive · {{ site.title }}{% endblock %}
+{% block main %}
+<p class="eyebrow">PlebOne Blog</p>
+<h1>Archive</h1>
+{% for y in years %}
+<section>
+  <h2>{{ y.year }}</h2>
+  {{ post_list(y.posts) }}
+</section>
+{% else %}
+<p class="empty">No posts yet.</p>
+{% endfor %}
+{% if tags %}
+<section>
+  <h2>Tags</h2>
+  <p class="tags">{% for t in tags %}<a href="{{ ('/tags/' ~ t.slug ~ '/') | url }}">#{{ t.name }} <small>{{ t.count }}</small></a>{% if not loop.last %} {% endif %}{% endfor %}</p>
+</section>
+{% endif %}
+{% endblock %}

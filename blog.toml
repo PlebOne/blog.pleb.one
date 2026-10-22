@@ -1,0 +1,34 @@
+# folderblog site configuration. See AGENTS.md for every key.
+title = "PlebOne Blog"
+base_url = "https://blog.pleb.one"
+description = "Notes on Nostr, Bitcoin and freedom tech from PlebOne and Nine Point Labs."
+author = "Tim"
+language = "en"
+# Tokens: {year} {month} {day} {slug}. Same pattern as blog.ninepointlabs.com, so URLs match.
+permalink = "/{year}/{month}/{slug}/"
+# Only deploy while this folder is a git checkout of this branch.
+deploy_branch = "main"
+
+[feed]
+limit = 20
+
+# Posts come from ~/Blogs/ninepointlabs-blog (see README.md). The sync writes
+# posts/ninepointlabs/ only when something changed, so it can't loop.
+[build]
+pre = ["bin/sync-from-ninepointlabs"]
+
+# Built site goes to the gh-pages branch of the same repo; Pages serves it at
+# blog.pleb.one (static/CNAME). The git target lets us set the commit email.
+[deploy]
+type = "git"
+remote = "https://github.com/PlebOne/blog.pleb.one.git"
+branch = "gh-pages"
+author_name = "ninepointlabs"
+author_email = "179739321+ninepointlabs@users.noreply.github.com"
+
+# Free-form values, available to templates as site.params / params.
+[params]
+ninepointlabs = "https://blog.ninepointlabs.com"
+
+[analytics]
+goatcounter = "https://goatcounter-production-af4b.up.railway.app"

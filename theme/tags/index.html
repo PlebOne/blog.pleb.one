@@ -1,0 +1,15 @@
+{% extends "_layouts/base.html" %}
+{% block title %}Tags · {{ site.title }}{% endblock %}
+{% block main %}
+<p class="eyebrow">PlebOne Blog</p>
+<h1>Tags</h1>
+{% if tags %}
+<ul class="tag-list">
+{% for t in tags | sort(attribute="count", reverse=true) %}
+  <li><a href="{{ ('/tags/' ~ t.slug ~ '/') | url }}">#{{ t.name }}</a> <small>{{ t.count }} post{{ t.count | pluralize }}</small></li>
+{% endfor %}
+</ul>
+{% else %}
+<p class="empty">No tags yet.</p>
+{% endif %}
+{% endblock %}
