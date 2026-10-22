@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+<title>PlebOne Blog</title>
+<link>https://blog.pleb.one/</link>
+<description>Notes on Nostr, Bitcoin and freedom tech from PlebOne and Nine Point Labs.</description>
+<language>en</language>
+<atom:link href="https://blog.pleb.one/feed.xml" rel="self" type="application/rss+xml"/>
+<generator>folderblog 0.2.5</generator>
+<lastBuildDate>Wed, 21 Oct 2026 00:00:00 -0500</lastBuildDate>
+<item>
+<title>Omostrich 0.3: log in to Nostr apps by QR code</title>
+<link>https://blog.pleb.one/2026/10/omostrich-0-3/</link>
+<guid isPermaLink="true">https://blog.pleb.one/2026/10/omostrich-0-3/</guid>
+<pubDate>Wed, 21 Oct 2026 00:00:00 -0500</pubDate>
+<dc:creator>Tim</dc:creator>
+<category>omostrich</category>
+<category>Nostr</category>
+<category>Omarchy</category>
+<category>Linux</category>
+<description><![CDATA[<p><a href="https://omostrich.com/">Omostrich</a> keeps your Nostr key on your own computer. It holds the key encrypted, unlocks from the Omarchy bar, posts notes, and signs for other Nostr apps over NIP-46 (remote signing) so those apps never see your key. Version 0.3.0 makes that last part much easier: you can now connect a phone app by scanning a QR code instead of copying long connection strings around.</p>
+]]></description>
+<content:encoded><![CDATA[<p><a href="https://omostrich.com/">Omostrich</a> keeps your Nostr key on your own computer. It holds the key encrypted, unlocks from the Omarchy bar, posts notes, and signs for other Nostr apps over NIP-46 (remote signing) so those apps never see your key. Version 0.3.0 makes that last part much easier: you can now connect a phone app by scanning a QR code instead of copying long connection strings around.</p>
+<h2 id="whats-new">What’s new</h2>
+<p><strong>Show a QR code, scan it from your phone.</strong> Under Remote signing there’s a new <strong>QR</strong> button next to Copy. It shows your <code>bunker://</code> connection string as a QR code, which a phone app such as Amethyst can scan to log in with a remote signer. The string is public (your public key and your NIP-46 relays, no secret), and the app’s connect request still shows up in Omostrich for you to approve, like any other.</p>
+<p><strong>Connect apps that show their own QR code.</strong> Some apps go the other way and display a <code>nostrconnect://</code> code. <strong>Scan QR</strong> reads it with your laptop camera, or <strong>Paste code</strong> takes a copied string. Omostrich checks the code, answers the app on the relays it names, and adds it to Authorized apps under its own name. After that it keeps listening for that app after every unlock until you revoke it.</p>
+<p>The camera is handled carefully. Frames go straight to the decoder and are never saved, and the camera turns off as soon as a code is read, when you cancel or close the preview, or after two minutes. Laptop webcams are fixed-focus and these codes are dense, so hold the code inside the guide box about 25 to 35 cm away. Even then, reading a phone’s code with a laptop camera can be unreliable, so the bunker QR is the dependable direction.</p>
+<p><strong>Approve all or deny all.</strong> Right after you log in, Amethyst signs a burst of events at once. When several requests are waiting, you can now settle every one on screen in one click, each just this once. Anything that arrives after you click still waits for its own answer.</p>
+<h2 id="smaller-fixes">Smaller fixes</h2>
+<ul>
+<li><strong>Always allow</strong> no longer overwrites an app’s saved relays or name.</li>
+<li>A request delivered twice is handled only once.</li>
+<li><code>daemon.log</code> now records each request’s method (such as <code>sign_event</code>) and whether the reply worked, never the content of the request or the reply.</li>
+<li>The About page’s privacy statement now covers camera use, the relays a scanned app names, and the new log details.</li>
+</ul>
+<h2 id="also-new-since-0-2">Also new since 0.2</h2>
+<p>Omostrich 0.2.1 added an optional listener on your Tailscale address so your own devices can reach the signer with a token, and NIP-46 requests are now heard on every bunker relay, not just your posting relays.</p>
+<h2 id="get-it">Get it</h2>
+<p>The QR features need three extra packages. Everything else works without them:</p>
+<pre class="highlight"><code class="language-bash"><span class="hl-source hl-shell hl-bash"><span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">sudo</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> pacman<span class="hl-variable hl-parameter hl-option hl-shell"><span class="hl-punctuation hl-definition hl-parameter hl-shell"> -</span>S</span> qrencode ffmpeg zbar</span>
+</span></code></pre>
+<p>To update an existing install:</p>
+<pre class="highlight"><code class="language-bash"><span class="hl-source hl-shell hl-bash"><span class="hl-meta hl-function-call hl-shell"><span class="hl-support hl-function hl-cd hl-shell">cd</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> <span class="hl-meta hl-group hl-expansion hl-tilde"><span class="hl-variable hl-language hl-tilde hl-shell">~</span></span>/Projects/omostrich</span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">git</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> pull</span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">npm</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> ci</span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">./install-daemon.sh</span></span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">./install-plugin.sh</span></span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">systemctl</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"><span class="hl-variable hl-parameter hl-option hl-shell"><span class="hl-punctuation hl-definition hl-parameter hl-shell"> --</span>user</span> restart omostrich</span>
+</span></code></pre>
+<p>The restart matters, because the running signer keeps the old code until it’s restarted. More about Omostrich is at <a href="https://omostrich.com/">omostrich.com</a>.</p>
+]]></content:encoded>
+</item>
+</channel>
+</rss>
