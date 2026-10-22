@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Omostrich 0.3.1: profile pictures loaded safely · PlebOne Blog</title>
+<meta name="description" content="Omostrich keeps your Nostr key on your own computer and signs for your apps from the Omarchy bar. Version 0.3.1 is a small security release. It changes how the panel shows your profile picture and attachment previews, so a picture someone else controls can’t stall or overload the panel.">
+<link rel="canonical" href="https://blog.ninepointlabs.com/2026/10/omostrich-0-3-1/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0a0a0a">
+<meta property="og:site_name" content="PlebOne Blog">
+<meta property="og:title" content="Omostrich 0.3.1: profile pictures loaded safely">
+<meta property="og:description" content="Omostrich keeps your Nostr key on your own computer and signs for your apps from the Omarchy bar. Version 0.3.1 is a small security release. It changes how the panel shows your profile picture and attachment previews, so a picture someone else controls can’t stall or overload the panel.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.ninepointlabs.com/2026/10/omostrich-0-3-1/">
+<meta property="og:image" content="https://blog.pleb.one/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.pleb.one/og-default.png">
+
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/highlight.css">
+<link rel="alternate" type="application/rss+xml" title="PlebOne Blog" href="/feed.xml">
+
+<meta property="article:published_time" content="2026-10-22T00:00:00-05:00">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "Omostrich 0.3.1: profile pictures loaded safely", "url": "https://blog.ninepointlabs.com/2026/10/omostrich-0-3-1/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://blog.ninepointlabs.com/2026/10/omostrich-0-3-1/"}, "datePublished": "2026-10-22T00:00:00-05:00", "description": "Omostrich keeps your Nostr key on your own computer and signs for your apps from the Omarchy bar. Version 0.3.1 is a small security release. It changes how the panel shows your profile picture and attachment previews, so a picture someone else controls can’t stall or overload the panel.", "image": "https://blog.pleb.one/og-default.png", "author": {"@type": "Person", "name": "Tim"}}
+</script>
+
+<script>window.goatcounter={path:function(p){return location.host+p}}</script>
+<script data-goatcounter="https://goatcounter-production-af4b.up.railway.app/count" async src="https://goatcounter-production-af4b.up.railway.app/count.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="glyph" aria-hidden="true"><svg viewBox="0 0 28 28" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l5 5-5 5"/><path d="M14 19h9"/></svg></span>PlebOne <span class="brand-sub">Blog</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="/">Posts</a></li>
+        <li><a href="/archive/">Archive</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="https://pleb.one">pleb.one</a></li>
+        <li><a href="https://relay.pleb.one">Relay</a></li>
+        <li><a href="/feed.xml">RSS</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<main id="main" class="wrap">
+
+<article class="post">
+  <header>
+    <p class="eyebrow"><time datetime="2026-10-22T00:00:00-05:00">October 22, 2026</time> · 2 min read</p>
+    <h1>Omostrich 0.3.1: profile pictures loaded safely</h1>
+    <p class="also-on">Also on <a href="https://blog.ninepointlabs.com/2026/10/omostrich-0-3-1/">blog.ninepointlabs.com</a></p>
+  </header>
+  <div class="content">
+    <p><a href="https://omostrich.com/">Omostrich</a> keeps your Nostr key on your own computer and signs for your apps from the Omarchy bar. Version 0.3.1 is a small security release. It changes how the panel shows your profile picture and attachment previews, so a picture someone else controls can’t stall or overload the panel.</p>
+<h2 id="what-changed">What changed</h2>
+<p><strong>Your profile picture is fetched with limits.</strong> Before, the panel took the picture URL from your Nostr profile and handed it straight to Qt to download and decode. Now the panel never loads that URL itself. While Omostrich is unlocked, the signer daemon downloads the picture with firm limits:</p>
+<ul>
+<li>a 10 second timeout and a 1 MB size cap, enforced even when the server doesn’t say how big the file is</li>
+<li>PNG, JPEG, GIF or WebP only, checked by both the content type and the file’s own signature, so SVG or HTML dressed up as an image is turned away</li>
+<li>at most 2048 by 2048 pixels, checked before anything is decoded, so a tiny, highly compressed file can’t blow up into a huge image in memory</li>
+</ul>
+<p>A picture that passes is kept as a local copy in <code>~/.local/share/omostrich/</code>, readable only by you, and the panel shows that copy at a small size. It isn’t fetched again on every restart. If a picture fails any check, you’ll see the placeholder instead, and the reason goes in <code>daemon.log</code>.</p>
+<p><strong>Attachment previews show your own file.</strong> When you attach an image to a note, the preview now shows the local file you just uploaded rather than loading it back from the Blossom server, and only when it’s within the same limits. The Blossom server’s reply is capped at 64 KB, and every image in the panel now has a bounded decode size.</p>
+<h2 id="why-it-matters">Why it matters</h2>
+<p>Your profile picture URL is public data that anyone can point anywhere, and the panel sits right next to your key. Keeping remote downloads out of the panel, and behind tight limits in the daemon, means a slow or hostile image server can’t hang the bar or eat your memory. The issue was raised in the Omarchy plugin marketplace review (<a href="https://github.com/omacom/omarchy-plugin-marketplace/issues/12494">#12494</a>), and nothing else in the panel loads remote content.</p>
+<h2 id="get-it">Get it</h2>
+<p>To update an existing install:</p>
+<pre class="highlight"><code class="language-bash"><span class="hl-source hl-shell hl-bash"><span class="hl-meta hl-function-call hl-shell"><span class="hl-support hl-function hl-cd hl-shell">cd</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> <span class="hl-meta hl-group hl-expansion hl-tilde"><span class="hl-variable hl-language hl-tilde hl-shell">~</span></span>/Projects/omostrich</span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">git</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> pull</span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">npm</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> ci</span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">./install-daemon.sh</span></span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">./install-plugin.sh</span></span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">systemctl</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"><span class="hl-variable hl-parameter hl-option hl-shell"><span class="hl-punctuation hl-definition hl-parameter hl-shell"> --</span>user</span> restart omostrich</span>
+</span></code></pre>
+<p>The restart matters, because the running signer keeps the old code until it’s restarted. The full notes are on the <a href="https://github.com/ninepointlabs/omostrich/releases/tag/v0.3.1">0.3.1 release page</a>, and more about Omostrich is at <a href="https://omostrich.com/">omostrich.com</a>.</p>
+
+  </div>
+  <footer>
+    
+<p class="tags"><a href="/tags/omostrich/">#omostrich</a> <a href="/tags/nostr/">#Nostr</a> <a href="/tags/omarchy/">#Omarchy</a> <a href="/tags/security/">#Security</a></p>
+
+    <nav class="neighbours" aria-label="More posts">
+      <a rel="next" href="/2026/10/local-relay-on-the-pc/">← A relay on your own PC: thinking out loud about FIPS and local sync</a>
+      <a rel="prev" href="/2026/10/omostrich-0-3/">Omostrich 0.3: log in to Nostr apps by QR code →</a>
+    </nav>
+  </footer>
+</article>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <p>A <a href="https://pleb.one">PlebOne</a> and <a href="https://ninepointlabs.com">Nine Point Labs</a> blog</p>
+    <ul>
+      <li><a href="https://pleb.one">pleb.one</a></li>
+      <li><a href="https://relay.pleb.one">relay.pleb.one</a></li>
+      <li><a href="https://blog.ninepointlabs.com">blog.ninepointlabs.com</a></li>
+      <li><a href="https://github.com/PlebOne">GitHub</a></li>
+      <li><a href="/feed.xml">RSS</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>

@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>https://blog.pleb.one/</loc></url>
 <url><loc>https://blog.pleb.one/2026/10/local-relay-on-the-pc/</loc><lastmod>2026-10-22T00:00:00-05:00</lastmod></url>
+<url><loc>https://blog.pleb.one/2026/10/omostrich-0-3-1/</loc><lastmod>2026-10-22T00:00:00-05:00</lastmod></url>
 <url><loc>https://blog.pleb.one/2026/10/omostrich-0-3/</loc><lastmod>2026-10-21T00:00:00-05:00</lastmod></url>
 <url><loc>https://blog.pleb.one/about/</loc></url>
 <url><loc>https://blog.pleb.one/archive/</loc></url>
@@ -11,4 +12,5 @@
 <url><loc>https://blog.pleb.one/tags/nostr/</loc></url>
 <url><loc>https://blog.pleb.one/tags/omarchy/</loc></url>
 <url><loc>https://blog.pleb.one/tags/omostrich/</loc></url>
+<url><loc>https://blog.pleb.one/tags/security/</loc></url>
 </urlset>
