@@ -7,7 +7,56 @@
 <language>en</language>
 <atom:link href="https://blog.pleb.one/feed.xml" rel="self" type="application/rss+xml"/>
 <generator>folderblog 0.2.5</generator>
-<lastBuildDate>Wed, 21 Oct 2026 00:00:00 -0500</lastBuildDate>
+<lastBuildDate>Thu, 22 Oct 2026 00:00:00 -0500</lastBuildDate>
+<item>
+<title>A relay on your own PC: thinking out loud about FIPS and local sync</title>
+<link>https://blog.pleb.one/2026/10/local-relay-on-the-pc/</link>
+<guid isPermaLink="true">https://blog.pleb.one/2026/10/local-relay-on-the-pc/</guid>
+<pubDate>Thu, 22 Oct 2026 00:00:00 -0500</pubDate>
+<dc:creator>Tim</dc:creator>
+<category>Nostr</category>
+<category>Freedom Tech</category>
+<description><![CDATA[<p>A few days ago Lez (lez@nostr.hu) left a reply that has stuck with me:</p>
+]]></description>
+<content:encoded><![CDATA[<p>A few days ago Lez (lez@nostr.hu) left a reply that has stuck with me:</p>
+<p><img src="https://blog.ninepointlabs.com/2026/10/local-relay-on-the-pc/lez-fips-local-relay.png" alt="Lez’s Nostr post suggesting FIPS and a relay on the PC that syncs with mobile."></p>
+<blockquote>
+<p>Please also consider FIPS and a relay running on the PC to sync with mobile. The advantage: when PC and mobile are on the same LAN, it connects directly, saving a round-trip to the Internet and back, which is a game changer when decrypting DMs for example.</p>
+</blockquote>
+<p>I think Lez is right, and it lines up with something I have wanted for Omostrich for a while: reaching my own machines without leaning on Tailscale or a VPN. So I spent some time looking at what already exists. This is not an announcement. It is me thinking out loud, and I would love to hear from people who have tried any of this.</p>
+<h2 id="why-a-relay-on-the-pc-makes-sense">Why a relay on the PC makes sense</h2>
+<p>Right now most of us send every note, reaction and DM out to a relay somewhere on the internet, and then pull it back down onto the phone sitting next to the laptop. That works, but it is slow, it depends on someone else’s server being up, and it means your data is only as private as that relay.</p>
+<p>A relay on your own computer flips that around. Your PC holds a full copy of your own events. Your phone talks to it directly when you are home, and everything syncs out to the public relays when it needs to. Decrypting a long DM thread from a box on the same desk is a very different experience from fetching it across the internet.</p>
+<h2 id="fips">FIPS</h2>
+<p><a href="https://github.com/jmcorgan/fips">FIPS</a> (Free Internetworking Peering System) is a mesh network where each machine’s identity is a Nostr key. Every node gets a private IPv6 address tied to its npub, finds peers by publishing signed adverts on Nostr relays, and uses encrypted Nostr messages to punch through home routers. It can run over the internet, a LAN, Tor, Bluetooth, Ethernet and even radio. Ordinary tools like ssh or a <code>ws://</code> relay URL just work on top of it.</p>
+<p>It is exactly the shape of thing I had in mind. It is also young. The README says the protocol and APIs are not yet stable, a security audit is the top item on the roadmap, and the most recent release was mostly security fixes. That is healthy for a project at this stage, and it is moving fast, but I would not lean on it for anything important yet. I do want to run it on my own machines and help where I can with testing and bug reports.</p>
+<p>Other options I looked at for the “reach my own machine” part:</p>
+<ul>
+<li><strong>Tailscale or Headscale.</strong> Still the most reliable choice today. Headscale lets you run the coordination server yourself.</li>
+<li><strong>Iroh.</strong> A mature Rust library (1.x) that connects directly when it can and falls back to a relay server you can host yourself. If Omostrich ever needs its own peer-to-peer link, this is probably where I would start.</li>
+<li><strong>Yggdrasil and Reticulum.</strong> Older mesh projects. Reticulum is strong for radio and offline use. Neither uses Nostr identities.</li>
+<li><strong>Tor onion services.</strong> Very mature and work through any router, but slow. Citrine on Android already offers this.</li>
+</ul>
+<h2 id="the-relay-part-already-mostly-exists">The relay part already mostly exists</h2>
+<p>The nice surprise is that the relay and sync side does not need much new work. NIP-77 (negentropy sync) lets two relays compare what they have and only send the difference.</p>
+<ul>
+<li><a href="https://github.com/hoytech/strfry">strfry</a> can sync both ways with a relay in a single command, filtered to your own pubkey. FIPS even ships an example of running strfry reachable only over the mesh.</li>
+<li><a href="https://github.com/bitvora/haven">Haven</a> is a personal relay with import and backup built in.</li>
+<li><a href="https://github.com/CodyTseng/nostr-relay-tray">nostr-relay-tray</a> is a desktop relay app, and as Lez points out, there is work there toward exactly this kind of syncing.</li>
+<li>Citrine does the same job on Android.</li>
+</ul>
+<p>relay.pleb.one already answers NIP-77 sync requests, so pulling your history down to a local relay works today. Pushing back up works for members of the relay.</p>
+<h2 id="what-i-might-do-with-this">What I might do with this</h2>
+<p>Nothing is decided, and I am trying hard not to start new projects this month. But the first experiment is small and needs no new code:</p>
+<ol>
+<li>Run strfry on my own PC with a timer that syncs my events with relay.pleb.one.</li>
+<li>Point my phone at it over the LAN, and later over FIPS.</li>
+<li>If that holds up, package it as a simple “pleb.one local” setup for Omarchy so anyone on the relay can do the same.</li>
+</ol>
+<p>I would only build something new if the existing tools fall short, and I suspect they will not.</p>
+<p>Thank you to Lez for the nudge. If you are running a local relay already, or you have been testing FIPS, I would really like to hear how it is going.</p>
+]]></content:encoded>
+</item>
 <item>
 <title>Omostrich 0.3: log in to Nostr apps by QR code</title>
 <link>https://blog.pleb.one/2026/10/omostrich-0-3/</link>

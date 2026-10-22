@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A relay on your own PC: thinking out loud about FIPS and local sync · PlebOne Blog</title>
+<meta name="description" content="A few days ago Lez (lez@nostr.hu) left a reply that has stuck with me:">
+<link rel="canonical" href="https://blog.ninepointlabs.com/2026/10/local-relay-on-the-pc/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="theme-color" content="#0a0a0a">
+<meta property="og:site_name" content="PlebOne Blog">
+<meta property="og:title" content="A relay on your own PC: thinking out loud about FIPS and local sync">
+<meta property="og:description" content="A few days ago Lez (lez@nostr.hu) left a reply that has stuck with me:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://blog.ninepointlabs.com/2026/10/local-relay-on-the-pc/">
+<meta property="og:image" content="https://blog.pleb.one/og-default.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://blog.pleb.one/og-default.png">
+
+<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/highlight.css">
+<link rel="alternate" type="application/rss+xml" title="PlebOne Blog" href="/feed.xml">
+
+<meta property="article:published_time" content="2026-10-22T00:00:00-05:00">
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "A relay on your own PC: thinking out loud about FIPS and local sync", "url": "https://blog.ninepointlabs.com/2026/10/local-relay-on-the-pc/", "mainEntityOfPage": {"@type": "WebPage", "@id": "https://blog.ninepointlabs.com/2026/10/local-relay-on-the-pc/"}, "datePublished": "2026-10-22T00:00:00-05:00", "description": "A few days ago Lez (lez@nostr.hu) left a reply that has stuck with me:", "image": "https://blog.pleb.one/og-default.png", "author": {"@type": "Person", "name": "Tim"}}
+</script>
+
+<script>window.goatcounter={path:function(p){return location.host+p}}</script>
+<script data-goatcounter="https://goatcounter-production-af4b.up.railway.app/count" async src="https://goatcounter-production-af4b.up.railway.app/count.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/"><span class="glyph" aria-hidden="true"><svg viewBox="0 0 28 28" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l5 5-5 5"/><path d="M14 19h9"/></svg></span>PlebOne <span class="brand-sub">Blog</span></a>
+    <nav class="site-nav" aria-label="Main">
+      <ul>
+        <li><a href="/">Posts</a></li>
+        <li><a href="/archive/">Archive</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="https://pleb.one">pleb.one</a></li>
+        <li><a href="https://relay.pleb.one">Relay</a></li>
+        <li><a href="/feed.xml">RSS</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+<main id="main" class="wrap">
+
+<article class="post">
+  <header>
+    <p class="eyebrow"><time datetime="2026-10-22T00:00:00-05:00">October 22, 2026</time> · 4 min read</p>
+    <h1>A relay on your own PC: thinking out loud about FIPS and local sync</h1>
+    <p class="also-on">Also on <a href="https://blog.ninepointlabs.com/2026/10/local-relay-on-the-pc/">blog.ninepointlabs.com</a></p>
+  </header>
+  <div class="content">
+    <p>A few days ago Lez (lez@nostr.hu) left a reply that has stuck with me:</p>
+<p><img src="https://blog.ninepointlabs.com/2026/10/local-relay-on-the-pc/lez-fips-local-relay.png" alt="Lez’s Nostr post suggesting FIPS and a relay on the PC that syncs with mobile."></p>
+<blockquote>
+<p>Please also consider FIPS and a relay running on the PC to sync with mobile. The advantage: when PC and mobile are on the same LAN, it connects directly, saving a round-trip to the Internet and back, which is a game changer when decrypting DMs for example.</p>
+</blockquote>
+<p>I think Lez is right, and it lines up with something I have wanted for Omostrich for a while: reaching my own machines without leaning on Tailscale or a VPN. So I spent some time looking at what already exists. This is not an announcement. It is me thinking out loud, and I would love to hear from people who have tried any of this.</p>
+<h2 id="why-a-relay-on-the-pc-makes-sense">Why a relay on the PC makes sense</h2>
+<p>Right now most of us send every note, reaction and DM out to a relay somewhere on the internet, and then pull it back down onto the phone sitting next to the laptop. That works, but it is slow, it depends on someone else’s server being up, and it means your data is only as private as that relay.</p>
+<p>A relay on your own computer flips that around. Your PC holds a full copy of your own events. Your phone talks to it directly when you are home, and everything syncs out to the public relays when it needs to. Decrypting a long DM thread from a box on the same desk is a very different experience from fetching it across the internet.</p>
+<h2 id="fips">FIPS</h2>
+<p><a href="https://github.com/jmcorgan/fips">FIPS</a> (Free Internetworking Peering System) is a mesh network where each machine’s identity is a Nostr key. Every node gets a private IPv6 address tied to its npub, finds peers by publishing signed adverts on Nostr relays, and uses encrypted Nostr messages to punch through home routers. It can run over the internet, a LAN, Tor, Bluetooth, Ethernet and even radio. Ordinary tools like ssh or a <code>ws://</code> relay URL just work on top of it.</p>
+<p>It is exactly the shape of thing I had in mind. It is also young. The README says the protocol and APIs are not yet stable, a security audit is the top item on the roadmap, and the most recent release was mostly security fixes. That is healthy for a project at this stage, and it is moving fast, but I would not lean on it for anything important yet. I do want to run it on my own machines and help where I can with testing and bug reports.</p>
+<p>Other options I looked at for the “reach my own machine” part:</p>
+<ul>
+<li><strong>Tailscale or Headscale.</strong> Still the most reliable choice today. Headscale lets you run the coordination server yourself.</li>
+<li><strong>Iroh.</strong> A mature Rust library (1.x) that connects directly when it can and falls back to a relay server you can host yourself. If Omostrich ever needs its own peer-to-peer link, this is probably where I would start.</li>
+<li><strong>Yggdrasil and Reticulum.</strong> Older mesh projects. Reticulum is strong for radio and offline use. Neither uses Nostr identities.</li>
+<li><strong>Tor onion services.</strong> Very mature and work through any router, but slow. Citrine on Android already offers this.</li>
+</ul>
+<h2 id="the-relay-part-already-mostly-exists">The relay part already mostly exists</h2>
+<p>The nice surprise is that the relay and sync side does not need much new work. NIP-77 (negentropy sync) lets two relays compare what they have and only send the difference.</p>
+<ul>
+<li><a href="https://github.com/hoytech/strfry">strfry</a> can sync both ways with a relay in a single command, filtered to your own pubkey. FIPS even ships an example of running strfry reachable only over the mesh.</li>
+<li><a href="https://github.com/bitvora/haven">Haven</a> is a personal relay with import and backup built in.</li>
+<li><a href="https://github.com/CodyTseng/nostr-relay-tray">nostr-relay-tray</a> is a desktop relay app, and as Lez points out, there is work there toward exactly this kind of syncing.</li>
+<li>Citrine does the same job on Android.</li>
+</ul>
+<p>relay.pleb.one already answers NIP-77 sync requests, so pulling your history down to a local relay works today. Pushing back up works for members of the relay.</p>
+<h2 id="what-i-might-do-with-this">What I might do with this</h2>
+<p>Nothing is decided, and I am trying hard not to start new projects this month. But the first experiment is small and needs no new code:</p>
+<ol>
+<li>Run strfry on my own PC with a timer that syncs my events with relay.pleb.one.</li>
+<li>Point my phone at it over the LAN, and later over FIPS.</li>
+<li>If that holds up, package it as a simple “pleb.one local” setup for Omarchy so anyone on the relay can do the same.</li>
+</ol>
+<p>I would only build something new if the existing tools fall short, and I suspect they will not.</p>
+<p>Thank you to Lez for the nudge. If you are running a local relay already, or you have been testing FIPS, I would really like to hear how it is going.</p>
+
+  </div>
+  <footer>
+    
+<p class="tags"><a href="/tags/nostr/">#Nostr</a> <a href="/tags/freedom-tech/">#Freedom Tech</a></p>
+
+    <nav class="neighbours" aria-label="More posts">
+      <span></span>
+      <a rel="prev" href="/2026/10/omostrich-0-3/">Omostrich 0.3: log in to Nostr apps by QR code →</a>
+    </nav>
+  </footer>
+</article>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <p>A <a href="https://pleb.one">PlebOne</a> and <a href="https://ninepointlabs.com">Nine Point Labs</a> blog</p>
+    <ul>
+      <li><a href="https://pleb.one">pleb.one</a></li>
+      <li><a href="https://relay.pleb.one">relay.pleb.one</a></li>
+      <li><a href="https://blog.ninepointlabs.com">blog.ninepointlabs.com</a></li>
+      <li><a href="https://github.com/PlebOne">GitHub</a></li>
+      <li><a href="/feed.xml">RSS</a></li>
+    </ul>
+  </div>
+</footer>
+</body>
+</html>
