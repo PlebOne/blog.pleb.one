@@ -16,9 +16,9 @@
 <dc:creator>Tim</dc:creator>
 <category>Nostr</category>
 <category>Freedom Tech</category>
-<description><![CDATA[<p>A few days ago Lez (lez@nostr.hu) left a reply that has stuck with me:</p>
+<description><![CDATA[<p>Last night Lez (lez@nostr.hu) left a reply that has stuck with me:</p>
 ]]></description>
-<content:encoded><![CDATA[<p>A few days ago Lez (lez@nostr.hu) left a reply that has stuck with me:</p>
+<content:encoded><![CDATA[<p>Last night Lez (lez@nostr.hu) left a reply that has stuck with me:</p>
 <p><img src="https://blog.ninepointlabs.com/2026/10/local-relay-on-the-pc/lez-fips-local-relay.png" alt="Lez’s Nostr post suggesting FIPS and a relay on the PC that syncs with mobile."></p>
 <blockquote>
 <p>Please also consider FIPS and a relay running on the PC to sync with mobile. The advantage: when PC and mobile are on the same LAN, it connects directly, saving a round-trip to the Internet and back, which is a game changer when decrypting DMs for example.</p>
