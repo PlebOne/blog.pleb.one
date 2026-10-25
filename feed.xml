@@ -6,7 +6,7 @@
 <description>Notes on Nostr, Bitcoin and freedom tech from PlebOne and Nine Point Labs.</description>
 <language>en</language>
 <atom:link href="https://blog.pleb.one/feed.xml" rel="self" type="application/rss+xml"/>
-<generator>folderblog 0.2.7</generator>
+<generator>folderblog 0.2.9</generator>
 <lastBuildDate>Thu, 22 Oct 2026 00:00:00 -0500</lastBuildDate>
 <item>
 <title>A relay on your own PC: thinking out loud about FIPS and local sync</title>
