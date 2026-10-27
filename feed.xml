@@ -7,7 +7,54 @@
 <language>en</language>
 <atom:link href="https://blog.pleb.one/feed.xml" rel="self" type="application/rss+xml"/>
 <generator>folderblog 0.2.10</generator>
-<lastBuildDate>Thu, 22 Oct 2026 00:00:00 -0500</lastBuildDate>
+<lastBuildDate>Tue, 27 Oct 2026 00:00:00 -0500</lastBuildDate>
+<item>
+<title>Omostrich 0.3.3: tighter signing grants and safer profile pictures</title>
+<link>https://blog.pleb.one/2026/10/omostrich-0-3-3/</link>
+<guid isPermaLink="true">https://blog.pleb.one/2026/10/omostrich-0-3-3/</guid>
+<pubDate>Tue, 27 Oct 2026 00:00:00 -0500</pubDate>
+<dc:creator>Tim</dc:creator>
+<category>omostrich</category>
+<category>Nostr</category>
+<category>Omarchy</category>
+<category>Security</category>
+<description><![CDATA[<p><a href="https://omostrich.com/">Omostrich</a> keeps your Nostr key on your own computer and signs for your apps from the Omarchy bar. Two releases landed this morning. Version 0.3.2 finishes the profile picture hardening that 0.3.1 started, and version 0.3.3 makes your signing permissions narrower and your approval prompts clearer, especially around direct messages.</p>
+]]></description>
+<content:encoded><![CDATA[<p><a href="https://omostrich.com/">Omostrich</a> keeps your Nostr key on your own computer and signs for your apps from the Omarchy bar. Two releases landed this morning. Version 0.3.2 finishes the profile picture hardening that 0.3.1 started, and version 0.3.3 makes your signing permissions narrower and your approval prompts clearer, especially around direct messages.</p>
+<h2 id="what-changed-in-0-3-3">What changed in 0.3.3</h2>
+<p><strong>“Always allow” now covers one kind of event, not everything.</strong> Before, remembering a signing request for an app meant that app could sign any kind of Nostr event without asking again. Now the button names the kind it covers, for example “Always allow sign kind 4 (DM)”, and Authorized apps lists each app’s grants kind by kind.</p>
+<p><strong>Encrypt and decrypt prompts show who’s on the other end.</strong> Each request shows the other person as a shortened npub (marked “(you)” when it’s yourself) and whether you’re encrypting to them or decrypting from them. Encrypt requests also show a short preview of the plain text. A kind 4 signing request shows its recipient, and DM ciphertext is no longer previewed. None of this goes into the log.</p>
+<p><strong>The signer keeps running when notifications can’t.</strong> If <code>notify-send</code> is missing or fails, Omostrich logs it once, with an error code only, and carries on instead of crashing.</p>
+<p><strong>Smaller fixes:</strong></p>
+<ul>
+<li>Signing requests for kind 14 and kind 1059 (private messages and gift wraps) show a warning and can only be approved once, never remembered.</li>
+<li>Your public key is handed out without a prompt only to an app that connected this session or that you’ve remembered. Anyone else gets asked.</li>
+<li>Gift-wrap notifications look back two days, and unlocking no longer sets off a burst of old ones.</li>
+</ul>
+<h2 id="what-changed-in-0-3-2">What changed in 0.3.2</h2>
+<p>0.3.1 put limits on how big your cached profile picture could be, but the file could still carry compressed metadata that expands while the image is being read. A small, hostile picture could push the panel to several gigabytes of memory. Now the daemon rewrites the downloaded picture down to just the parts needed to draw it, with no re-encoding and no new dependency:</p>
+<ul>
+<li><strong>PNG</strong> keeps only the image data and the colour chunks it needs. An unknown critical chunk is refused.</li>
+<li><strong>JPEG</strong> drops comments, EXIF, ICC, XMP and Photoshop data.</li>
+<li><strong>GIF</strong> keeps the first frame only.</li>
+<li><strong>WebP</strong> keeps the image data and drops everything else. Animated WebP is refused, so the placeholder shows.</li>
+</ul>
+<p>Anything after the end of the image is dropped too, and a picture cached by 0.3.1 is fetched again on startup, so the cache only ever holds the stripped copy. This came out of the Omarchy plugin marketplace review (<a href="https://github.com/omacom/omarchy-plugin-marketplace/issues/12494">#12494</a>).</p>
+<h2 id="why-it-matters">Why it matters</h2>
+<p>Your signer should do exactly what you agreed to and nothing more. A blanket “always allow” was easy to click and hard to reason about later, and a DM prompt that doesn’t say who it’s for asks you to approve blind. Per-kind grants and clearer prompts mean you can see what each app is allowed to do and who your messages are going to.</p>
+<h2 id="upgrading">Upgrading</h2>
+<p>Old blanket signing grants meant “sign any kind”, and there’s no way to tell which kind you had in mind, so they’re <strong>removed the first time 0.3.3 starts</strong>. The app and its other grants stay, <code>daemon.log</code> names each affected app, and the app asks once more for each kind it needs.</p>
+<p>To update an existing install:</p>
+<pre class="highlight"><code class="language-bash"><span class="hl-source hl-shell hl-bash"><span class="hl-meta hl-function-call hl-shell"><span class="hl-support hl-function hl-cd hl-shell">cd</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> <span class="hl-meta hl-group hl-expansion hl-tilde"><span class="hl-variable hl-language hl-tilde hl-shell">~</span></span>/Projects/omostrich</span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">git</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> pull</span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">npm</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"> ci</span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">./install-daemon.sh</span></span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">./install-plugin.sh</span></span>
+<span class="hl-meta hl-function-call hl-shell"><span class="hl-variable hl-function hl-shell">systemctl</span></span><span class="hl-meta hl-function-call hl-arguments hl-shell"><span class="hl-variable hl-parameter hl-option hl-shell"><span class="hl-punctuation hl-definition hl-parameter hl-shell"> --</span>user</span> restart omostrich</span>
+</span></code></pre>
+<p>The restart matters, because the running signer keeps the old code until it’s restarted. The full notes are on the <a href="https://github.com/ninepointlabs/omostrich/releases/tag/v0.3.2">0.3.2</a> and <a href="https://github.com/ninepointlabs/omostrich/releases/tag/v0.3.3">0.3.3</a> release pages, the code is on <a href="https://github.com/ninepointlabs/omostrich">GitHub</a>, and more about Omostrich is at <a href="https://omostrich.com/">omostrich.com</a>.</p>
+]]></content:encoded>
+</item>
 <item>
 <title>A relay on your own PC: thinking out loud about FIPS and local sync</title>
 <link>https://blog.pleb.one/2026/10/local-relay-on-the-pc/</link>
