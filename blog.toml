@@ -6,6 +6,7 @@ author = "Tim"
 language = "en"
 # Tokens: {year} {month} {day} {slug}. Same pattern as blog.ninepointlabs.com, so URLs match.
 permalink = "/{year}/{month}/{slug}/"
+timezone = "America/Chicago"
 # Only deploy while this folder is a git checkout of this branch.
 deploy_branch = "main"
 
